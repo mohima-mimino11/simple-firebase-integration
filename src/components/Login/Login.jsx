@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import auth from "../../firebase/firebase.init";
 import { useState } from "react";
 
@@ -6,6 +6,7 @@ import { useState } from "react";
 
 const Login = () => {
   const provider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
   const [user, setUser] = useState(null)
   const handleGoogleSignIn = () =>{
     signInWithPopup(auth, provider)
@@ -15,6 +16,18 @@ const Login = () => {
     })
     .catch(error =>{
       console.log('ERROR', error);
+    })
+  }
+
+  const handleGithubSignIn = () =>{
+    signInWithPopup(auth, githubProvider)
+    .then(result =>{
+      console.log(result.user);
+      setUser(result.user)
+    })
+    .catch(error =>{
+      console.log("Github Error", error);
+      
     })
   }
   const handleSignOut = () =>{
@@ -31,14 +44,19 @@ const Login = () => {
   return (
     <div>
       {
-        user ? <button onClick={handleSignOut}>Sign Out</button> :  <button onClick={handleGoogleSignIn} >Login With Google</button>
+        user ? <button onClick={handleSignOut}>Sign Out</button> : 
+        <>
+        <button onClick={handleGoogleSignIn} >Login With Google</button>
+        <button onClick={handleGithubSignIn}>Login With Github</button>
+        </> 
+        
       }
      
       
       {
         user && <div>
           <h4>{user.displayName}</h4>
-          <p>{user.email}</p>
+          <p>Email: {user.email}</p>
           <img src={user.photoURL} alt="" />
         </div>
       }
